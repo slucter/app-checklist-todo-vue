@@ -17,6 +17,13 @@ import axios from 'axios'
 
 export default {
   name: 'Register',
+  data () {
+    return {
+      email: '',
+      username: '',
+      password: ''
+    }
+  },
   methods: {
     register () {
       axios.post('http://18.141.178.15:8080/register', {
