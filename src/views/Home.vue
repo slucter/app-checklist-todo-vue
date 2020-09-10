@@ -3,7 +3,7 @@
         <div class="box-get">
             <div class="label">
                 <h3>Get All Items</h3>
-                <a href="#">Add New Item</a>
+                <a href="#" @click="showModal">Add New Item</a>
             </div>
            <div class="head-tb">
                <div class="name-th">
@@ -34,12 +34,15 @@
            </div>
         </div>
         <div class="modal-add">
-            <div class="box-modal">
-                <h3>Add New Item</h3>
+            <form @submit.prevent="addItem" class="box-modal">
+                <div class="ttl">
+                    <h3>Add New Item</h3>
+                    <h3 @click="closeModal">X</h3>
+                </div>
                 <p>Name Item</p>
-                <input type="text">
-                <button>Add</button>
-            </div>
+                <input type="text" placeholder="name" v-model="nameItem">
+                <button type="submit">Add</button>
+            </form>
         </div>
     </div>
 </template>
@@ -51,7 +54,8 @@ export default {
   name: 'Home',
   data () {
     return {
-      datas: []
+      datas: [],
+      nameItem: ''
     }
   },
   methods: {
@@ -62,6 +66,25 @@ export default {
         if (result.data.statusCode === 2300) {
           alert('Berhasil Dihapus!')
           this.$router.go()
+        }
+      })
+    },
+    showModal () {
+      document.querySelector('.modal-add').classList.add('showModal')
+    },
+    closeModal () {
+      document.querySelector('.modal-add').classList.remove('showModal')
+    },
+    addItem () {
+      const JwtToken = localStorage.getItem('token')
+      axios.defaults.headers.common.Authorization = `Bearer ${JwtToken}`
+      axios.post('http://18.141.178.15:8080/checklist', {
+        name: this.nameItem
+      }).then((result) => {
+        if (result.data.statusCode === 2000) {
+          alert('Berhasil Add Data!')
+          this.$router.go()
+          document.querySelector('.modal-add').classList.remove('showModal')
         }
       })
     }
@@ -83,6 +106,14 @@ export default {
 </script>
 
 <style scoped>
+    .ttl{
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+    }
+    .ttl h3{
+        cursor: pointer;
+    }
     .container{
         width: 80vw;
         display: flex;
@@ -147,7 +178,9 @@ export default {
         background-color: #fff!important;
         border-bottom: 1px solid #cacaac;
     }
-
+    .showModal{
+        display: flex!important
+    }
     .modal-add{
         width: 100vw;
         height: 100vh;
